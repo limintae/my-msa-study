@@ -6,6 +6,11 @@ spring:
     name: my-eurekaserver
   profiles:
     active: local
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
 
 eureka:
   instance:

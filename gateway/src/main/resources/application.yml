@@ -6,6 +6,11 @@ spring:
     name: gateway-service
   profiles:
     active: local
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
   cloud:
     gateway:
       routes:

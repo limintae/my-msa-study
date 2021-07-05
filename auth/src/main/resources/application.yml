@@ -6,6 +6,11 @@ spring:
     name: auth-service
   profiles:
     active: local
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
 
 eureka:
   client:

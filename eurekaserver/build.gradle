@@ -5,7 +5,7 @@ plugins {
     id 'war'
 }
 
-group = 'awaai.eureka.server'
+group = 'com.msa.example'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
@@ -28,7 +28,6 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

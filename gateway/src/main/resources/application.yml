@@ -1,17 +1,46 @@
 server:
-  port: 8082
+  port: 8080
 
 spring:
   application:
     name: gateway-service
+  profiles:
+    active: local
   cloud:
     gateway:
-      - id: service-1
-        uri: lb://SERVICE-1
-        predicates:
-          - Path=/order/**
-        filters:
-          - RewritePath=/order/?(?<segment>.*), /$\{segment}
+      routes:
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/auth/**
+          filters:
+            - RewritePath=/auth/?(?<segment>.*), /$\{segment}
+            - name: AuthServiceFilter
+              args:
+                baseMessage: Spring Cloud Gateway AuthServiceFilter Filter
+                preLogger: true
+                postLogger: true
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order/**
+          filters:
+            - RewritePath=/order/?(?<segment>.*), /$\{segment}
+            - name: OrderServiceFilter
+              args:
+                baseMessage: Spring Cloud Gateway OrderServiceFilter Filter
+                preLogger: true
+                postLogger: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - "gateway"
+  endpoint:
+    gateway:
+      enabled: true
 
 eureka:
   client:

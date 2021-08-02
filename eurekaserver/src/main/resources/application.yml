@@ -12,11 +12,27 @@ spring:
     restart:
       enabled: true
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - "health"
+          - "info"
+
 eureka:
+  server:
+    response-cache-update-interval-ms: 1000
   instance:
+    prefer-ip-address: true
     hostname: localhost
+    lease-renewal-interval-in-seconds: 30
+    health-check-url-path: http://${eureka.instance.hostname}:${server.port}/actuator/health
+    status-page-url-path: http://${eureka.instance.hostname}:${server.port}/actuator/info
   client:
-    register-with-eureka: false
+    healthcheck:
+      enabled: true
+    register-with-eureka: true
     fetch-registry: false
     service-url:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/

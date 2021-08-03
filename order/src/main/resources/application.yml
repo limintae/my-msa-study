@@ -12,23 +12,35 @@ spring:
     restart:
       enabled: true
   jpa:
-    # MYSQL을 사용할 것
     database: mysql
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     open-in-view: false
-    # API 호출 시 SQL문을 출력한다.
     show-sql: true
-    # DDL 정의시 데이터베이스의 고유 기능을 사용합니다.
-    # ex) 테이블 생성, 삭제 등
-    generate-ddl: true
+    generate-ddl: false
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/lim_db?serverTimezone=UTC&characterEncoding=UTF-8
     username: limintae
     password: limdb7897
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - "health"
+          - "info"
+
 eureka:
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
+    lease-renewal-interval-in-seconds: 30
+    health-check-url-path: http://${eureka.instance.hostname}:${server.port}/actuator/health
+    status-page-url-path: http://${eureka.instance.hostname}:${server.port}/actuator/info
   client:
+    healthcheck:
+      enabled: true
     register-with-eureka: true
     fetch-registry: true
     service-url:

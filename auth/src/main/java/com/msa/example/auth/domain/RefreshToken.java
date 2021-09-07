@@ -16,21 +16,21 @@ import javax.persistence.Table;
 public class RefreshToken {
 
     @Id
-    @Column
-    private String key;
+    @Column(name = "token_key")
+    private String tokenKey;
 
-    @Column
-    private String value;
+    @Column(name = "token_value")
+    private String tokenValue;
 
-    public RefreshToken updateValue(String token) {
-        this.value = token;
+    public RefreshToken updateValue(String tokenValue) {
+        this.tokenValue = tokenValue;
         return this;
     }
 
     @Builder
-    public RefreshToken(String key, String value) {
-        this.key = key;
-        this.value = value;
+    public RefreshToken(String tokenKey, String tokenValue) {
+        this.tokenKey = tokenKey;
+        this.tokenValue = tokenValue;
     }
 
 }

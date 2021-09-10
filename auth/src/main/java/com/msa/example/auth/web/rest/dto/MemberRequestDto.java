@@ -18,8 +18,8 @@ public class MemberRequestDto {
 
     public Member toMember(PasswordEncoder passwordEncoder) {
         return Member.builder()
-                .email(email)
-                .password(passwordEncoder.encode(password))
+                .email(this.email)
+                .password(passwordEncoder.encode(this.password))
                 .authority(Authority.ROLE_USER)
                 .build();
     }

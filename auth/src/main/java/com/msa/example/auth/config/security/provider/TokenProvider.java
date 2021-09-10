@@ -1,5 +1,6 @@
-package com.msa.example.auth.config.security;
+package com.msa.example.auth.config.security.provider;
 
+import com.msa.example.auth.domain.MemberInfo;
 import com.msa.example.auth.web.rest.dto.TokenDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -15,9 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -46,9 +45,22 @@ public class TokenProvider {
 
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
+
+        // payload 생성
+        MemberInfo memberInfo = (MemberInfo) authentication.getPrincipal();
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("id", memberInfo.getId());
+        claims.put("email", memberInfo.getEmail());
+        claims.put("name", memberInfo.getName());
+        claims.put(AUTHORITIES_KEY, authorities);
+
+
         String accessToken = Jwts.builder()
+                .setId(UUID.randomUUID().toString())
                 .setSubject(authentication.getName())       // payload "sub": "name"
-                .claim(AUTHORITIES_KEY, authorities)        // payload "auth": "ROLE_USER"
+                .setClaims(claims)
+                // .claim(AUTHORITIES_KEY, authorities)        // payload "auth": "ROLE_USER"
+//                .claim(AUTHORITIES_KEY, claims)
                 .setExpiration(accessTokenExpiresIn)        // payload "exp": 1516239022 (예시)
                 .signWith(key, SignatureAlgorithm.HS512)    // header "alg": "HS512"
                 .compact();
@@ -81,8 +93,28 @@ public class TokenProvider {
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
+//        for (Map.Entry<Object, Object> it : claims.get(AUTHORITIES_KEY).entrySet()) {
+//            l1.add(it.getKey());
+//            l2.add(it.getValue());
+//        }
+//
+//
+//        Collection<? extends GrantedAuthority> authorities =
+//                Arrays.stream(claims.get(AUTHORITIES_KEY))
+//                        .map(SimpleGrantedAuthority::new)
+//                        .collect(Collectors.toList());
+
+
         // UserDetails 객체를 만들어서 Authentication 리턴
-        UserDetails principal = new User(claims.getSubject(), "", authorities);
+        // UserDetails principal = new User(claims.getSubject(), "", authorities);
+        Long id = Long.parseLong(String.valueOf(claims.get("id")));
+        String email = (String) claims.get("email");
+
+        MemberInfo principal = MemberInfo.builder()
+                .id(id)
+                .email(email)
+                .authorities(authorities)
+                .build();
 
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }

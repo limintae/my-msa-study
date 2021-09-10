@@ -1,6 +1,7 @@
 package com.msa.example.auth.config.security;
 
 import com.msa.example.auth.config.security.filter.JwtFilter;
+import com.msa.example.auth.config.security.provider.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

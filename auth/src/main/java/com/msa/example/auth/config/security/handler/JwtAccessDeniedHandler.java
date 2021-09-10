@@ -1,4 +1,4 @@
-package com.msa.example.auth.config.security;
+package com.msa.example.auth.config.security.handler;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;

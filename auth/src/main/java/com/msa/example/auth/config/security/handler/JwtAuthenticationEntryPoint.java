@@ -1,4 +1,4 @@
-package com.msa.example.auth.config.security;
+package com.msa.example.auth.config.security.handler;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;

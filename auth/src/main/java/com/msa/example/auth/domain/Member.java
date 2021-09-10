@@ -20,6 +20,9 @@ public class Member {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "password")
     private String password;
 
@@ -28,8 +31,9 @@ public class Member {
     private Authority authority;
 
     @Builder
-    public Member(String email, String password, Authority authority) {
+    public Member(String email, String name, String password, Authority authority) {
         this.email = email;
+        this.name = name;
         this.password = password;
         this.authority = authority;
     }

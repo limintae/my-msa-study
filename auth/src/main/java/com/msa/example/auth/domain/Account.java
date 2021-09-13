@@ -8,9 +8,9 @@ import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor
-@Table(name = "app_user")
+@Table(name = "account")
 @Entity
-public class Member {
+public class Account {
 
     @Id
     @Column(name = "id")
@@ -31,7 +31,7 @@ public class Member {
     private Authority authority;
 
     @Builder
-    public Member(String email, String name, String password, Authority authority) {
+    public Account(String email, String name, String password, Authority authority) {
         this.email = email;
         this.name = name;
         this.password = password;

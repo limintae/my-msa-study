@@ -1,15 +1,15 @@
 package com.msa.example.auth.repository;
 
-import com.msa.example.auth.domain.Member;
+import com.msa.example.auth.domain.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface AccountRepository extends JpaRepository<Account, Long> {
 
-    Optional<Member> findByEmail(String email);
+    Optional<Account> findByEmail(String email);
     boolean existsByEmail(String email);
 
 }

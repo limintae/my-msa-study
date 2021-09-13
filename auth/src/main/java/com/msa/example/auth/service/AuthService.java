@@ -1,9 +1,9 @@
 package com.msa.example.auth.service;
 
 import com.msa.example.auth.config.security.provider.TokenProvider;
-import com.msa.example.auth.domain.Member;
+import com.msa.example.auth.domain.Account;
 import com.msa.example.auth.domain.RefreshToken;
-import com.msa.example.auth.repository.MemberRepository;
+import com.msa.example.auth.repository.AccountRepository;
 import com.msa.example.auth.repository.RefreshTokenRepository;
 import com.msa.example.auth.web.rest.dto.MemberRequestDto;
 import com.msa.example.auth.web.rest.dto.MemberResponseDto;
@@ -22,19 +22,19 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final MemberRepository memberRepository;
+    private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
     public MemberResponseDto signup(MemberRequestDto memberRequestDto) {
-        if (memberRepository.existsByEmail(memberRequestDto.getEmail())) {
+        if (accountRepository.existsByEmail(memberRequestDto.getEmail())) {
             throw new RuntimeException("이미 가입되어 있는 유저입니다");
         }
 
-        Member member = memberRequestDto.toMember(passwordEncoder);
-        return MemberResponseDto.of(memberRepository.save(member));
+        Account account = memberRequestDto.toMember(passwordEncoder);
+        return MemberResponseDto.of(accountRepository.save(account));
     }
 
     @Transactional

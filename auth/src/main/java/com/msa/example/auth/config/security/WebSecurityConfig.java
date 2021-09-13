@@ -1,10 +1,14 @@
 package com.msa.example.auth.config.security;
 
+import com.msa.example.auth.config.security.filter.CustomAuthenticationProcessingFilter;
 import com.msa.example.auth.config.security.handler.JwtAccessDeniedHandler;
 import com.msa.example.auth.config.security.handler.JwtAuthenticationEntryPoint;
+import com.msa.example.auth.config.security.handler.JwtAuthenticationFailureHandler;
+import com.msa.example.auth.config.security.provider.CustomAuthenticationProvider;
 import com.msa.example.auth.config.security.provider.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,6 +16,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
@@ -21,6 +27,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final TokenProvider tokenProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final JwtAuthenticationFailureHandler jwtAuthenticationFailureHandler;
+    private final CustomAuthenticationProvider customAuthenticationProvider;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -57,7 +65,39 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 // JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
                 .and()
-                .apply(new JwtSecurityConfig(tokenProvider));
+                .addFilterBefore(customAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
+                //.apply(new JwtSecurityConfig(tokenProvider, jwtAuthenticationFailureHandler, this.authenticationManager()));
+    }
+
+    private CustomAuthenticationProcessingFilter customAuthenticationProcessingFilter() throws Exception {
+        CustomAuthenticationProcessingFilter filter
+                = new CustomAuthenticationProcessingFilter(new AntPathRequestMatcher("/auth/login", "POST"), this.authenticationManager(), jwtAuthenticationFailureHandler);
+        // filter.setAuthenticationManager(this.authenticationManager());
+        return filter;
+    }
+
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) {
+        auth.authenticationProvider(this.customAuthenticationProvider);
+    }
+
+//    private static final RequestMatcher PROTECTED_URLS = new OrRequestMatcher(
+//            new AntPathRequestMatcher("/v1/**"),new AntPathRequestMatcher("/admin/**")
+//    );
+
+//    @Bean
+//    AuthenticationFilter authenticationFilter() throws Exception {
+//        final AuthenticationFilter filter = new AuthenticationFilter(PROTECTED_URLS);
+//        filter.setAuthenticationManager(authenticationManager());
+//        filter.setAuthenticationSuccessHandler(successHandler());
+//        filter.setAuthenticationFailureHandler(authenticationFailureHandler());
+//        return filter;
+//    }
+
+    @Bean
+    JwtAuthenticationFailureHandler authenticationFailureHandler(){
+        return new JwtAuthenticationFailureHandler();
     }
 
 }

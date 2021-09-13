@@ -1,7 +1,7 @@
 package com.msa.example.auth.web.rest.dto;
 
 import com.msa.example.auth.domain.Authority;
-import com.msa.example.auth.domain.Member;
+import com.msa.example.auth.domain.Account;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,11 +16,11 @@ public class MemberRequestDto {
     private String email;
     private String password;
 
-    public Member toMember(PasswordEncoder passwordEncoder) {
-        return Member.builder()
+    public Account toMember(PasswordEncoder passwordEncoder) {
+        return Account.builder()
                 .email(this.email)
                 .password(passwordEncoder.encode(this.password))
-                .authority(Authority.ROLE_USER)
+                .authority(Authority.USER)
                 .build();
     }
 

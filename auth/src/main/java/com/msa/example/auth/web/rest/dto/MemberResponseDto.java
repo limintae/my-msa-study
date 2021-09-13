@@ -1,6 +1,6 @@
 package com.msa.example.auth.web.rest.dto;
 
-import com.msa.example.auth.domain.Member;
+import com.msa.example.auth.domain.Account;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,8 +12,8 @@ public class MemberResponseDto {
 
     private String email;
 
-    public static MemberResponseDto of(Member member) {
-        return new MemberResponseDto(member.getEmail());
+    public static MemberResponseDto of(Account account) {
+        return new MemberResponseDto(account.getEmail());
     }
 
 }

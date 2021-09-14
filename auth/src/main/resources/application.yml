@@ -41,8 +41,8 @@ eureka:
   client:
     healthcheck:
       enabled: true
-    register-with-eureka: true
-    fetch-registry: true
+    register-with-eureka: false
+    fetch-registry: false
     service-url:
       defaultZone: http://localhost:8081/eureka/
 

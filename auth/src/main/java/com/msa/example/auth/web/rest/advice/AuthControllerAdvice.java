@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class AuthControllerAdvice {
 
-    @ExceptionHandler(value = UsernameNotFoundException.class)
-    public ResponseEntity handle(final UsernameNotFoundException exception) {
+    @ExceptionHandler(value = RuntimeException.class)
+    public ResponseEntity runtimeExceptionHandler(final RuntimeException exception) {
         return ResponseEntity.ok(exception.getMessage());
     }
 

@@ -109,10 +109,12 @@ public class TokenProvider {
         // UserDetails principal = new User(claims.getSubject(), "", authorities);
         Long id = Long.parseLong(String.valueOf(claims.get("id")));
         String email = (String) claims.get("email");
+        String name = (String) claims.get("name");
 
         MemberInfo principal = MemberInfo.builder()
                 .id(id)
                 .email(email)
+                .name(name)
                 .authorities(authorities)
                 .build();
 

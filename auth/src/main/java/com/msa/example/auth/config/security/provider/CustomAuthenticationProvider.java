@@ -1,8 +1,7 @@
 package com.msa.example.auth.config.security.provider;
 
 import com.msa.example.auth.domain.CustomUserDetailsService;
-import com.msa.example.auth.domain.MemberInfo;
-import lombok.RequiredArgsConstructor;
+import com.msa.example.auth.domain.AccountInfo;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,12 +32,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String email = (String) authentication.getPrincipal();
         String password = (String) authentication.getCredentials();
 
-        MemberInfo memberInfo = (MemberInfo) customUserDetailsService.loadUserByUsername(email);
-        if(!passwordEncoder.matches(password, memberInfo.getPassword())){
+        AccountInfo accountInfo = (AccountInfo) customUserDetailsService.loadUserByUsername(email);
+        if(!passwordEncoder.matches(password, accountInfo.getPassword())){
             throw new BadCredentialsException("패스워드가 일치하지 않습니다.");
         }
 
-        return new UsernamePasswordAuthenticationToken(memberInfo, null, memberInfo.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(accountInfo, null, accountInfo.getAuthorities());
     }
 
     @Override

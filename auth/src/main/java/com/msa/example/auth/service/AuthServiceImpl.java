@@ -3,13 +3,16 @@ package com.msa.example.auth.service;
 import com.msa.example.auth.config.security.provider.TokenProvider;
 import com.msa.example.auth.domain.entity.Account;
 import com.msa.example.auth.domain.entity.RefreshToken;
+import com.msa.example.auth.domain.entity.Role;
 import com.msa.example.auth.repository.AccountRepository;
 import com.msa.example.auth.repository.RefreshTokenRepository;
+import com.msa.example.auth.repository.RoleRepository;
 import com.msa.example.auth.web.rest.dto.MemberRequestDto;
 import com.msa.example.auth.web.rest.dto.MemberResponseDto;
 import com.msa.example.auth.web.rest.dto.TokenDto;
 import com.msa.example.auth.web.rest.dto.TokenRequestDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -17,26 +20,37 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 
-@Service
+@Slf4j
+@Service("AuthService")
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthServiceImpl implements AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final RoleRepository roleRepository;
 
+    @Override
     @Transactional
     public MemberResponseDto signup(MemberRequestDto memberRequestDto) {
         if (accountRepository.existsByEmail(memberRequestDto.getEmail())) {
             throw new RuntimeException("이미 가입되어 있는 유저입니다");
         }
-
         Account account = memberRequestDto.toMember(passwordEncoder);
+
+        Role role = roleRepository.findByName(memberRequestDto.getRole());
+        List<Role> roles = new ArrayList<>();
+        roles.add(role);
+
+        account.setRoles(roles);
         return MemberResponseDto.of(accountRepository.save(account));
     }
 
+    @Override
     @Transactional
     public TokenDto login(MemberRequestDto memberRequestDto) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
@@ -65,6 +79,7 @@ public class AuthService {
         return tokenDto;
     }
 
+    @Override
     @Transactional
     public TokenDto reissue(TokenRequestDto tokenRequestDto) {
         // 1. Refresh Token 검증

@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.Collection;
 
 @Getter
-public class MemberInfo implements UserDetails, Serializable {
+public class AccountInfo implements UserDetails, Serializable {
 
     private static final long serialVersionUID = 6429201700229150054L;
     private final Long id;
@@ -19,7 +19,7 @@ public class MemberInfo implements UserDetails, Serializable {
     private final Collection<? extends GrantedAuthority> authorities;
 
     @Builder
-    public MemberInfo(Long id, String password, String email, String name, Collection<? extends GrantedAuthority> authorities) {
+    public AccountInfo(Long id, String password, String email, String name, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.password = password;
         this.email = email;

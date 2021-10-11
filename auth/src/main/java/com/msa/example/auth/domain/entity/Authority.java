@@ -1,24 +1,33 @@
 package com.msa.example.auth.domain.entity;
 
+import com.msa.example.auth.domain.enums.AuthorityStatus;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Collection;
+import java.util.List;
 
 @NoArgsConstructor
-@Table(name = "account_authority")
+@Getter
+@Table(name = "authority")
 @Entity
-public class AccountAuthority {
+public class Authority {
 
     @Id
-    @Column(name = "authority_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private AuthorityStatus name;
 
-    @ManyToMany(mappedBy = "authorities")
-    private Collection<AccountRole> roles;
+    @ManyToMany(mappedBy = "authorities", cascade = {CascadeType.PERSIST})
+    private List<Role> roles;
+
+    @Builder
+    public Authority(AuthorityStatus name, List<Role> roles) {
+        this.name = name;
+        this.roles = roles;
+    }
 
 }

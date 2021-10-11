@@ -1,4 +1,4 @@
-package com.msa.example.auth.domain;
+package com.msa.example.auth.domain.entity;
 
 import lombok.Builder;
 import lombok.Getter;

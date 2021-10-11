@@ -1,51 +1,30 @@
-server:
-  port: 8083
-
 spring:
-  application:
-    name: auth-service
-  profiles:
-    active: local
-  devtools:
-    livereload:
-      enabled: true
-    restart:
-      enabled: true
+  h2:
+    console:
+      enabled: false
+      path: /h2
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     open-in-view: false
     show-sql: true
-    generate-ddl: false
+    hibernate:
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+    generate-ddl: true
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/lim_db?serverTimezone=UTC&characterEncoding=UTF-8
-    username: limintae
-    password: limdb7897!
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem://localhost/~/testdb;MODE=MYSQL
+    username: sa
+    password:
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include:
-          - "health"
-          - "info"
-
-eureka:
-  instance:
-    prefer-ip-address: true
-    hostname: localhost
-    lease-renewal-interval-in-seconds: 30
-    health-check-url-path: http://${eureka.instance.hostname}:${server.port}/actuator/health
-    status-page-url-path: http://${eureka.instance.hostname}:${server.port}/actuator/info
-  client:
-    healthcheck:
-      enabled: true
-    register-with-eureka: false
-    fetch-registry: false
-    service-url:
-      defaultZone: http://localhost:8081/eureka/
-
-# $ echo 'spring-boot-security-jwt-tutorial-jiwoon-spring-boot-security-jwt-tutorial' | base64
-jwt:
-  secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK
+#  sql:
+#    init:
+#      schema-locations: classpath*:db/hsqldb/schema.sql
+#      data-locations: classpath*:db/hsqldb/data.sql
+#      mode: always

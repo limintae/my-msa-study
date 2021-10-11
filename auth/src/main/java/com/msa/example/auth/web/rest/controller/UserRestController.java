@@ -1,6 +1,6 @@
 package com.msa.example.auth.web.rest.controller;
 
-import com.msa.example.auth.domain.MemberInfo;
+import com.msa.example.auth.domain.AccountInfo;
 import com.msa.example.auth.service.MemberService;
 import com.msa.example.auth.web.rest.dto.MemberResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,13 +19,20 @@ public class UserRestController {
 
     private final MemberService memberService;
 
-    @GetMapping(path = "/{email}")
+    @GetMapping(path = "/token-info")
+    public ResponseEntity<AccountInfo> getTokenInfo(
+            @AuthenticationPrincipal AccountInfo accountInfo) {
+        log.info("member email is : " + accountInfo.getEmail());
+        return ResponseEntity.ok(accountInfo);
+    }
+
+    @GetMapping(path = "/info")
     public ResponseEntity<MemberResponseDto> getMemberInfo(
-            @PathVariable("email") String email,
-            @AuthenticationPrincipal MemberInfo memberInfo
-    ) {
-        log.info("member name is : " + memberInfo.getName());
-        return ResponseEntity.ok(memberService.getMemberInfo(email));
+            @AuthenticationPrincipal AccountInfo accountInfo) {
+        log.info("member email is : " + accountInfo.getEmail());
+        return ResponseEntity.ok(MemberResponseDto.builder()
+                .email(accountInfo.getEmail())
+                .build());
     }
 
 }

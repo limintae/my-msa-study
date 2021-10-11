@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -30,18 +31,21 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final ObjectMapper objectMapper;
-//    private final TokenProvider tokenProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtAuthenticationFailureHandler jwtAuthenticationFailureHandler;
     private final JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler;
-//    private final CustomAuthenticationProvider customAuthenticationProvider;
     private final CustomUserDetailsService customUserDetailsService;
     private final TokenProvider tokenProvider;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Override
+    public void configure(WebSecurity web) {
+//        web.ignoring();
     }
 
     @Override
@@ -70,15 +74,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 로그인, 회원가입 API 는 토큰이 없는 상태에서 요청이 들어오기 때문에 permitAll 설정
                 .and()
                 .authorizeRequests()
+                .antMatchers("/favicon.ico").permitAll()
+                .antMatchers("/h2/**").permitAll()
+                .antMatchers("/actuator/**").permitAll()
                 .antMatchers("/auth/**").permitAll()
-                .antMatchers("/api/v1/user/**").hasAnyAuthority("USER")
+                .antMatchers("/api/v1/user/**").hasAnyAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()   // 나머지 API 는 전부 인증 필요
 
                 // JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
                 .and()
                 .addFilterBefore(customAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
-                //.apply(new JwtSecurityConfig(tokenProvider, jwtAuthenticationFailureHandler, this.authenticationManager()));
     }
 
     private CustomAuthenticationProcessingFilter customAuthenticationProcessingFilter() throws Exception {

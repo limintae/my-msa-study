@@ -1,6 +1,6 @@
 package com.msa.example.auth.config.security.provider;
 
-import com.msa.example.auth.domain.MemberInfo;
+import com.msa.example.auth.domain.AccountInfo;
 import com.msa.example.auth.web.rest.dto.TokenDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -11,8 +11,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -38,7 +36,8 @@ public class TokenProvider {
     public TokenDto generateTokenDto(Authentication authentication) {
         // 권한들 가져오기
         String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
+                .map(s -> s.getAuthority())
+//                .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         long now = (new Date()).getTime();
@@ -47,11 +46,11 @@ public class TokenProvider {
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
 
         // payload 생성
-        MemberInfo memberInfo = (MemberInfo) authentication.getPrincipal();
+        AccountInfo accountInfo = (AccountInfo) authentication.getPrincipal();
         Map<String, Object> claims = new HashMap<>();
-        claims.put("id", memberInfo.getId());
-        claims.put("email", memberInfo.getEmail());
-        claims.put("name", memberInfo.getName());
+        claims.put("id", accountInfo.getId());
+        claims.put("email", accountInfo.getEmail());
+        claims.put("name", accountInfo.getName());
         claims.put(AUTHORITIES_KEY, authorities);
 
 
@@ -111,7 +110,7 @@ public class TokenProvider {
         String email = (String) claims.get("email");
         String name = (String) claims.get("name");
 
-        MemberInfo principal = MemberInfo.builder()
+        AccountInfo principal = AccountInfo.builder()
                 .id(id)
                 .email(email)
                 .name(name)

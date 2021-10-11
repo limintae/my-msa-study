@@ -1,6 +1,6 @@
 package com.msa.example.auth.web.rest.controller;
 
-import com.msa.example.auth.service.AuthService;
+import com.msa.example.auth.service.AuthServiceImpl;
 import com.msa.example.auth.web.rest.dto.MemberRequestDto;
 import com.msa.example.auth.web.rest.dto.MemberResponseDto;
 import com.msa.example.auth.web.rest.dto.TokenDto;
@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthService authService;
+    private final AuthServiceImpl authService123;
 
     @PostMapping("/signup")
     public ResponseEntity<MemberResponseDto> signup(@RequestBody MemberRequestDto memberRequestDto) {
-        return ResponseEntity.ok(authService.signup(memberRequestDto));
+        return ResponseEntity.ok(authService123.signup(memberRequestDto));
     }
 
 //    @PostMapping("/login")
@@ -31,7 +31,7 @@ public class AuthController {
 
     @PostMapping("/reissue")
     public ResponseEntity<TokenDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
-        return ResponseEntity.ok(authService.reissue(tokenRequestDto));
+        return ResponseEntity.ok(authService123.reissue(tokenRequestDto));
     }
 
 }

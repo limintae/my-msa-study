@@ -1,33 +1,43 @@
 package com.msa.example.auth.domain.entity;
 
+import com.msa.example.auth.domain.enums.RoleStatus;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Collection;
+import java.util.List;
 
 @Getter
+@Setter
 @NoArgsConstructor
-@Table(name = "account_role", uniqueConstraints = @UniqueConstraint(columnNames = {"role_id", "role", "authority"}))
+@Table(name = "role")
 @Entity
-public class AccountRole {
+public class Role {
     @Id
-    @Column(name = "role_id", columnDefinition = "int(3)")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "authority_id", columnDefinition = "int(3)")
-    private Long authorityId;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "name")
+    private RoleStatus name;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
-            name = "account_authority",
+            name = "role_authority",
             joinColumns = @JoinColumn(
-                    name = "role_id", referencedColumnName = "role_id"
+                    name = "role_id", referencedColumnName = "id"
             ),
             inverseJoinColumns = @JoinColumn(
-                    name = "authority_id", referencedColumnName = "authority_id"
+                    name = "authority_id", referencedColumnName = "id"
             )
     )
-    private Collection<Authority> authorities;
+    private List<Authority> authorities;
+
+    @Builder
+    public Role(RoleStatus name) {
+        this.name = name;
+    }
 }

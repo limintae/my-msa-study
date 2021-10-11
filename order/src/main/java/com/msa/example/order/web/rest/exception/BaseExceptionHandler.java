@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @RestControllerAdvice(basePackages = {"com.msa.example.order"})
@@ -32,6 +33,18 @@ public class BaseExceptionHandler {
                 .message(ex.getMessage())
                 .build();
         return new ResponseEntity<>(baseErrorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<BaseErrorResponse> responseStatusException(ResponseStatusException ex) {
+        log.error(ex.getReason());
+
+        return new ResponseEntity<>(
+                BaseErrorResponse.builder()
+                        .status(HttpStatus.UNAUTHORIZED.value())
+                        .message(ex.getReason())
+                        .build(),
+                HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(CustomFeignException.class)

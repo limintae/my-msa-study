@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
-@RestControllerAdvice(basePackages = {"com.msa.example.order.web"})
+@RestControllerAdvice(basePackages = {"com.msa.example.order"})
 public class BaseExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<BaseErrorResponse> exception(Exception ex) {
+    public ResponseEntity<BaseErrorResponse> exception(RuntimeException ex) {
         log.error(ex.getMessage());
         BaseErrorResponse baseErrorResponse = BaseErrorResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
@@ -34,4 +34,25 @@ public class BaseExceptionHandler {
         return new ResponseEntity<>(baseErrorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(CustomFeignException.class)
+    public ResponseEntity<BaseErrorResponse> customFeignException(CustomFeignException ex) {
+        log.error(ex.getMessage());
+
+        switch (ex.getStatus()) {
+            case 401:
+                return new ResponseEntity<>(
+                        BaseErrorResponse.builder()
+                            .status(HttpStatus.UNAUTHORIZED.value())
+                            .message(ex.getMessage())
+                            .build(),
+                        HttpStatus.UNAUTHORIZED);
+            default:
+                return new ResponseEntity<>(
+                        BaseErrorResponse.builder()
+                                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                                .message(ex.getMessage())
+                                .build(),
+                        HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

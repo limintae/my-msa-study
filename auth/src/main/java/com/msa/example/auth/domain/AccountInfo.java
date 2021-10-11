@@ -5,11 +5,13 @@ import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 @Getter
-public class MemberInfo implements UserDetails {
+public class MemberInfo implements UserDetails, Serializable {
 
+    private static final long serialVersionUID = 6429201700229150054L;
     private final Long id;
     private final String password;
     private final String email;

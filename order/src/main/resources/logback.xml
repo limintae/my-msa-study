@@ -9,7 +9,9 @@
         </layout>
     </appender>
 
-    <root level="INFO">
+    <logger name="com.msa.example.order.adaptor" lever="DEBUG"/>
+
+    <root level="DEBUG">
         <appender-ref ref="CONSOLE" />
     </root>
 

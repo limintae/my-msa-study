@@ -11,17 +11,6 @@ spring:
       enabled: true
     restart:
       enabled: true
-  jpa:
-    database: mysql
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-    open-in-view: false
-    show-sql: true
-    generate-ddl: false
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/lim_db?serverTimezone=UTC&characterEncoding=UTF-8
-    username: limintae
-    password: limdb7897
 
 management:
   endpoints:
@@ -33,7 +22,8 @@ management:
 
 eureka:
   instance:
-    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    prefer-ip-address: false
     hostname: localhost
     lease-renewal-interval-in-seconds: 30
     health-check-url-path: http://${eureka.instance.hostname}:${server.port}/actuator/health

@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -24,7 +25,7 @@ public class Role {
     @Column(name = "name")
     private RoleStatus name;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "role_authority",
             joinColumns = @JoinColumn(
@@ -34,7 +35,7 @@ public class Role {
                     name = "authority_id", referencedColumnName = "id"
             )
     )
-    private List<Authority> authorities;
+    private Set<Authority> authorities;
 
     @Builder
     public Role(RoleStatus name) {

@@ -21,7 +21,9 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service("AuthService")
@@ -43,7 +45,7 @@ public class AuthServiceImpl implements AuthService {
         Account account = memberRequestDto.toMember(passwordEncoder);
 
         Role role = roleRepository.findByName(memberRequestDto.getRole());
-        List<Role> roles = new ArrayList<>();
+        Set<Role> roles = new HashSet<>();
         roles.add(role);
 
         account.setRoles(roles);

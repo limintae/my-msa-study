@@ -1,21 +1,25 @@
 package com.msa.example.auth.service;
 
 import com.msa.example.auth.config.security.SecurityUtils;
+import com.msa.example.auth.repository.AccountCustomRepository;
 import com.msa.example.auth.repository.AccountRepository;
 import com.msa.example.auth.web.rest.dto.MemberResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
     private final AccountRepository accountRepository;
+    private final AccountCustomRepository accountCustomRepository;
 
     @Transactional(readOnly = true)
     public MemberResponseDto getMemberInfo(String email) {
-        return accountRepository.findByEmail(email)
+        return Optional.ofNullable(accountCustomRepository.findByEmail(email))
                 .map(MemberResponseDto::of)
                 .orElseThrow(() -> new RuntimeException("유저 정보가 없습니다."));
     }

@@ -1,12 +1,12 @@
 plugins {
-    id 'org.springframework.boot' version '2.5.2'
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id 'java'
+    id "org.springframework.boot" version "2.5.2"
+    id "io.spring.dependency-management" version "1.0.11.RELEASE"
+    id "java"
 }
 
-group = 'com.msa.example'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+group = "com.msa.example"
+version = "0.0.1-SNAPSHOT"
+sourceCompatibility = "11"
 
 configurations {
     compileOnly {
@@ -19,33 +19,49 @@ repositories {
 }
 
 ext {
-    set('springCloudVersion', "2020.0.3")
+    set("springCloudVersion", "2020.0.3")
+    set("queryDslVersion", "4.4.0")
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    runtimeOnly 'com.h2database:h2'
-    implementation 'org.springframework.boot:spring-boot-starter-security:'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-    implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
-    compileOnly 'org.projectlombok:lombok:1.18.20'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-    annotationProcessor 'org.projectlombok:lombok:1.18.20'
-    runtimeOnly 'mysql:mysql-connector-java:8.0.25'
-    compileOnly 'io.jsonwebtoken:jjwt-api:0.11.2'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    runtimeOnly "com.h2database:h2"
+    implementation "org.springframework.boot:spring-boot-starter-security:"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
+    implementation "org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j"
+    compileOnly "org.projectlombok:lombok:1.18.20"
+    developmentOnly "org.springframework.boot:spring-boot-devtools"
+    annotationProcessor (
+            "org.springframework.boot:spring-boot-configuration-processor",
+            "org.projectlombok:lombok:1.18.20",
+            "javax.persistence:javax.persistence-api",
+            "javax.annotation:javax.annotation-api",
+            "com.querydsl:querydsl-apt:${queryDslVersion}:jpa"
+    )
+    runtimeOnly "mysql:mysql-connector-java:8.0.25"
+    compileOnly "io.jsonwebtoken:jjwt-api:0.11.2"
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:0.11.2"
+    runtimeOnly "io.jsonwebtoken:jjwt-jackson:0.11.2"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.springframework.security:spring-security-test"
 }
 
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+// QueryDSL
+sourceSets {
+    main {
+        java {
+            srcDirs = ["$projectDir/src/main/java", "$projectDir/build/generated"]
+        }
     }
 }
 

@@ -2,6 +2,7 @@ package com.msa.example.auth.domain;
 
 import com.msa.example.auth.domain.entity.Account;
 import com.msa.example.auth.domain.entity.Role;
+import com.msa.example.auth.repository.AccountCustomRepository;
 import com.msa.example.auth.repository.AccountRepository;
 import com.msa.example.auth.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,10 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,13 +26,15 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final AccountRepository accountRepository;
     private final RoleRepository roleRepository;
+    private final AccountCustomRepository accountCustomRepository;
 
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<Account> account = accountRepository.findByEmail(email);
+//        Account account = accountRepository.findByEmail(email);
+        Account account = accountCustomRepository.findByEmail(email);
         log.info(email);
-        return account
+        return Optional.ofNullable(account)
                 .map(this::createUserDetails)
                 .orElseThrow(() ->
                         new UsernameNotFoundException(email + " -> 데이터베이스에서 찾을 수 없습니다.")
@@ -43,7 +43,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     // DB 에 User 값이 존재한다면 UserDetails 객체로 만들어서 리턴
     private UserDetails createUserDetails(Account account) {
-//        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(account.getRoles().toString());
+        log.info("createUserDetails");
 
         Collection<SimpleGrantedAuthority> test = Stream.concat(
                 getRoles(account.getRoles()).stream(),
@@ -61,14 +61,14 @@ public class CustomUserDetailsService implements UserDetailsService {
         return accountInfo;
     }
 
-    private Collection<SimpleGrantedAuthority> getRoles(List<Role> roles) {
+    private Collection<SimpleGrantedAuthority> getRoles(Set<Role> roles) {
         return roles.stream()
                 .map(role -> role.getName().toString())
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
 
-    private Collection<SimpleGrantedAuthority> getAuthorities(List<Role> roles) {
+    private Collection<SimpleGrantedAuthority> getAuthorities(Set<Role> roles) {
         return roles.stream()
                 .flatMap(role -> role.getAuthorities().stream())
                 .map(authority -> new SimpleGrantedAuthority(authority.getName().toString()))

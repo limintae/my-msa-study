@@ -31,7 +31,7 @@ public class Account {
     @Column(name = "password", columnDefinition = "VARCHAR(200)")
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     @JoinTable(
             name = "account_role",
             joinColumns = @JoinColumn(
@@ -41,10 +41,10 @@ public class Account {
                     name = "role_id", referencedColumnName = "id"
             )
     )
-    private List<Role> roles;
+    private Set<Role> roles;
 
     @Builder
-    public Account(String email, String name, String password, List<Role> roles) {
+    public Account(String email, String name, String password, Set<Role> roles) {
         this.email = email;
         this.name = name;
         this.password = password;

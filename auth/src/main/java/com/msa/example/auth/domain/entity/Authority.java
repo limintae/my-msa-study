@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @Getter
@@ -22,10 +23,10 @@ public class Authority {
     private AuthorityStatus name;
 
     @ManyToMany(mappedBy = "authorities", cascade = {CascadeType.PERSIST})
-    private List<Role> roles;
+    private Set<Role> roles;
 
     @Builder
-    public Authority(AuthorityStatus name, List<Role> roles) {
+    public Authority(AuthorityStatus name, Set<Role> roles) {
         this.name = name;
         this.roles = roles;
     }

@@ -1,4 +1,4 @@
-package com.msa.example.auth.web.rest.dto;
+package com.msa.example.order.config.security;
 
 import lombok.Builder;
 import lombok.Getter;

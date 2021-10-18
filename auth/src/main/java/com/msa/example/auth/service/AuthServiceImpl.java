@@ -1,5 +1,7 @@
 package com.msa.example.auth.service;
 
+import com.msa.example.auth.config.security.PasswordEncoderConfig;
+import com.msa.example.auth.config.security.TokenValidStatus;
 import com.msa.example.auth.config.security.provider.TokenProvider;
 import com.msa.example.auth.domain.entity.Account;
 import com.msa.example.auth.domain.entity.RefreshToken;
@@ -27,14 +29,24 @@ import java.util.Set;
 
 @Slf4j
 @Service("AuthService")
-@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final AccountRepository accountRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoderConfig passwordEncoderConfig;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final RoleRepository roleRepository;
+
+    public AuthServiceImpl(AccountRepository accountRepository,
+                           PasswordEncoderConfig passwordEncoderConfig,
+                           TokenProvider tokenProvider,
+                           RefreshTokenRepository refreshTokenRepository,
+                           RoleRepository roleRepository) {
+        this.accountRepository = accountRepository;
+        this.passwordEncoderConfig = passwordEncoderConfig;
+        this.tokenProvider = tokenProvider;
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.roleRepository = roleRepository;
+    }
 
     @Override
     @Transactional
@@ -42,7 +54,7 @@ public class AuthServiceImpl implements AuthService {
         if (accountRepository.existsByEmail(memberRequestDto.getEmail())) {
             throw new RuntimeException("이미 가입되어 있는 유저입니다");
         }
-        Account account = memberRequestDto.toMember(passwordEncoder);
+        Account account = memberRequestDto.toMember(passwordEncoderConfig.passwordEncoder());
 
         Role role = roleRepository.findByName(memberRequestDto.getRole());
         Set<Role> roles = new HashSet<>();
@@ -52,40 +64,40 @@ public class AuthServiceImpl implements AuthService {
         return MemberResponseDto.of(accountRepository.save(account));
     }
 
-    @Override
-    @Transactional
-    public TokenDto login(MemberRequestDto memberRequestDto) {
-        // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
-        UsernamePasswordAuthenticationToken authenticationToken = memberRequestDto.toAuthentication();
-//        Optional<Member> member = Optional.ofNullable(memberRepository.findByEmail(memberRequestDto.getEmail())).orElseThrow(
-//                () -> new UsernameNotFoundException("user not found")
-//        );
-//        UsernamePasswordAuthenticationToken authenticationToken2 = new UsernamePasswordAuthenticationToken("", "", "");
-
-        // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
-        // authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
-        // 3. 인증 정보를 기반으로 JWT 토큰 생성
-        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
-
-        // 4. RefreshToken 저장
-        RefreshToken refreshToken = RefreshToken.builder()
-                .tokenKey(authentication.getName())
-                .tokenValue(tokenDto.getRefreshToken())
-                .build();
-
-        refreshTokenRepository.save(refreshToken);
-
-        // 5. 토큰 발급
-        return tokenDto;
-    }
+//    @Override
+//    @Transactional
+//    public TokenDto login(MemberRequestDto memberRequestDto) {
+//        // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
+//        UsernamePasswordAuthenticationToken authenticationToken = memberRequestDto.toAuthentication();
+////        Optional<Member> member = Optional.ofNullable(memberRepository.findByEmail(memberRequestDto.getEmail())).orElseThrow(
+////                () -> new UsernameNotFoundException("user not found")
+////        );
+////        UsernamePasswordAuthenticationToken authenticationToken2 = new UsernamePasswordAuthenticationToken("", "", "");
+//
+//        // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
+//        // authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
+//        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+//
+//        // 3. 인증 정보를 기반으로 JWT 토큰 생성
+//        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
+//
+//        // 4. RefreshToken 저장
+//        RefreshToken refreshToken = RefreshToken.builder()
+//                .tokenKey(authentication.getName())
+//                .tokenValue(tokenDto.getRefreshToken())
+//                .build();
+//
+//        refreshTokenRepository.save(refreshToken);
+//
+//        // 5. 토큰 발급
+//        return tokenDto;
+//    }
 
     @Override
     @Transactional
     public TokenDto reissue(TokenRequestDto tokenRequestDto) {
         // 1. Refresh Token 검증
-        if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {
+        if (tokenProvider.validateToken(tokenRequestDto.getRefreshToken()) != TokenValidStatus.SUCCESS) {
             throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
         }
 
@@ -105,8 +117,8 @@ public class AuthServiceImpl implements AuthService {
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
         // 6. 저장소 정보 업데이트
-        RefreshToken newRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());
-        refreshTokenRepository.save(newRefreshToken);
+//        RefreshToken newRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());
+//        refreshTokenRepository.save(newRefreshToken);
 
         // 토큰 발급
         return tokenDto;

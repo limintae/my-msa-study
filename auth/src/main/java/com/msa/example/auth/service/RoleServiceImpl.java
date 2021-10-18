@@ -33,24 +33,7 @@ public class RoleServiceImpl implements RoleService {
         authorities.add(authority);
         roleRepository.save(role);
 
-        // 역할별 권한 생성
-//        RoleAuthorityId roleAuthorityId = RoleAuthorityId.builder()
-//                .roleId(role.getId())
-//                .authorityId(authority.getId())
-//                .build();
-//        RoleAuthority roleAuthority = RoleAuthority.builder()
-//                .roleAuthorityId(roleAuthorityId)
-//                .role(role)
-//                .authority(authority)
-//                .build();
-
-        // 권한 등록
-//        Set<RoleAuthority> roleAuthorities = Optional.ofNullable(role.getRoleAuthorities()).orElse(new HashSet<>());
-//        roleAuthorities.add(roleAuthority);
-//        role.setRoleAuthorities(roleAuthorities);
-//        roleRepository.save(role);
         log.info("success createRoleAuthority");
-
     }
 
 }

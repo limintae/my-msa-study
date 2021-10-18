@@ -1,9 +1,9 @@
 server:
-  port: 8082
+  port: 8084
 
 spring:
   application:
-    name: order-service
+    name: mail-service
   profiles:
     active: local
   devtools:
@@ -11,6 +11,19 @@ spring:
       enabled: true
     restart:
       enabled: true
+#  mail:
+#    default-encoding: UTF-8
+#    host: smtp.daum.net
+#    port: 465
+#    username: limintae88@daum.net
+#    password: awadevlim2021#
+#    properties:
+#      mail.smtp.host: smtp.daum.net
+#      mail.smtp.port: 465
+#      mail.smtp.auth: true
+#      mail.smtp.ssl.enable: true
+#      mail.debug: true
+#    protocol: smtp
 
 management:
   endpoints:
@@ -19,6 +32,8 @@ management:
         include:
           - "health"
           - "info"
+          - "refresh"
+          - "beans"
 
 eureka:
   instance:
@@ -31,10 +46,10 @@ eureka:
   client:
     healthcheck:
       enabled: true
-    register-with-eureka: true
-    fetch-registry: true
+    register-with-eureka: false
+    fetch-registry: false
     service-url:
       defaultZone: http://localhost:8081/eureka/
 
-jwt:
-  secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK
+kafka:
+    bootstrapServers: 192.168.48.3:9092

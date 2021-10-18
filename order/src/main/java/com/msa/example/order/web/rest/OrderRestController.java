@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = "")
+@RequestMapping(value = "/order")
 public class OrderRestController {
 
     private final StoreRepository storeRepository;

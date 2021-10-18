@@ -8,7 +8,7 @@ import com.msa.example.auth.web.rest.dto.TokenRequestDto;
 public interface AuthService {
 
     MemberResponseDto signup(MemberRequestDto memberRequestDto);
-    TokenDto login(MemberRequestDto memberRequestDto);
+//    TokenDto login(MemberRequestDto memberRequestDto);
     TokenDto reissue(TokenRequestDto tokenRequestDto);
 
 }

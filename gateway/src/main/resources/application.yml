@@ -25,6 +25,11 @@ spring:
                 baseMessage: Spring Cloud Gateway AuthServiceFilter Filter
                 preLogger: true
                 postLogger: true
+            - name: CustomAuthFilter
+              args:
+                baseMessage: Spring Cloud Gateway CustomAuthFilter Filter
+                preLogger: true
+                postLogger: true
         - id: order-service
           uri: lb://ORDER-SERVICE
           predicates:

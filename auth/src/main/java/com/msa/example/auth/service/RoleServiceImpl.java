@@ -9,18 +9,27 @@ import com.msa.example.auth.repository.RoleCustomRepository;
 import com.msa.example.auth.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Slf4j
-@RequiredArgsConstructor
 @Service("RoleService")
 public class RoleServiceImpl implements RoleService {
 
     private final RoleRepository roleRepository;
     private final RoleCustomRepository roleCustomRepository;
     private final AuthorityRepository authorityRepository;
+
+    public RoleServiceImpl(
+            RoleRepository roleRepository,
+            RoleCustomRepository roleCustomRepository,
+            AuthorityRepository authorityRepository) {
+        this.roleRepository = roleRepository;
+        this.roleCustomRepository = roleCustomRepository;
+        this.authorityRepository = authorityRepository;
+    }
 
     @Override
     public void createRoleAuthority(RoleStatus roleStatus, AuthorityStatus authorityStatus) {

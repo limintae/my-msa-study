@@ -18,3 +18,19 @@ spring:
     url: jdbc:mysql://localhost:3306/lim_db?serverTimezone=UTC&characterEncoding=UTF-8
     username: limintae
     password: limdb7897!
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    prefer-ip-address: false
+    hostname: localhost
+    lease-renewal-interval-in-seconds: 30
+    health-check-url-path: http://${eureka.instance.hostname}:${server.port}/actuator/health
+    status-page-url-path: http://${eureka.instance.hostname}:${server.port}/actuator/info
+  client:
+    healthcheck:
+      enabled: true
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8081/eureka/

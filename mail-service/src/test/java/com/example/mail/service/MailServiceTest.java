@@ -25,9 +25,25 @@ class MailServiceTest {
         MailSendDTO mailSendDTO = MailSendDTO.builder()
                 .sendTo("limintae88@daum.net")
                 .subject("test subject")
-                .text("this is test mail")
+                .text("hi!!")
                 .build();
         mailService.send(mailSendDTO);
+    }
+
+    @Test
+    void sendMailHtml() throws Exception {
+//        "<html> <body><h1>Hello </h1> </body></html>"
+        String htmlMsg = "<body style='border:2px solid black'>"
+                +"Your onetime password for registration is  "
+                + "Please use this OTP to complete your new user registration."+
+                "OTP is confidential, do not share this  with anyone.</body>";
+
+        MailSendDTO mailSendDTO = MailSendDTO.builder()
+                .sendTo("limintae88@daum.net")
+                .subject("test subject")
+                .text(htmlMsg)
+                .build();
+        mailService.sendHtml(mailSendDTO);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.msa.example.order.web.rest.exception;
+package com.msa.example.order.web.rest.advice;
 
 import lombok.Getter;
 

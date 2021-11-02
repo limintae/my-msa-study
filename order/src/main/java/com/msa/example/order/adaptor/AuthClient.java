@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @FeignClient(
         value = "auth-service",
-//        url = "http://localhost:8083",
         configuration = AuthFeignConfig.class)
 public interface AuthClient {
 

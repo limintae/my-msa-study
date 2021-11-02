@@ -1,6 +1,6 @@
 package com.msa.example.order.config.web;
 
-import com.msa.example.order.web.rest.exception.CustomFeignException;
+import com.msa.example.order.web.rest.advice.CustomFeignException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import lombok.RequiredArgsConstructor;

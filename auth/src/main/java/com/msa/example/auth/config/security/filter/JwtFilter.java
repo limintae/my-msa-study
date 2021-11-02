@@ -1,6 +1,7 @@
 package com.msa.example.auth.config.security.filter;
 
 import com.msa.example.auth.config.security.TokenValidStatus;
+import com.msa.example.auth.config.security.exception.JwtExpiredTokenException;
 import com.msa.example.auth.config.security.handler.JwtAuthenticationEntryPoint;
 import com.msa.example.auth.config.security.provider.TokenProvider;
 import com.msa.example.auth.service.AuthService;
@@ -12,6 +13,7 @@ import lombok.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -50,54 +52,54 @@ public class JwtFilter extends OncePerRequestFilter {
             FilterChain filterChain) throws IOException, ServletException {
 
         // 1. Request Header 에서 토큰을 꺼냄
-        // 1. Request Header 에서 토큰을 꺼냄
         String accessToken = resolveToken(request, AUTHORIZATION_HEADER);
-        String refreshToken = resolveToken(request, REFRESH_TOKEN_HEADER);
+        if (StringUtils.hasText(accessToken)) {
+            setSecurityContextHolder(accessToken);
+        }
 
         // 2. validateToken 으로 토큰 유효성 검사
         // 정상 토큰이면 해당 토큰으로 Authentication 을 가져와서 SecurityContext 에 저장
-
-        if (StringUtils.hasText(accessToken)) {
-            switch (tokenProvider.validateToken(accessToken)) {
-                case SUCCESS:
-                    setSecurityContextHolder(accessToken);
-                    break;
-                case EXPIRED:
-                    // Refresh
-                    TokenDto tokenDto = authService.reissue(
-                            TokenRequestDto.builder()
-                                .accessToken(accessToken)
-                                .refreshToken(refreshToken)
-                                .build()
-                    );
-                    setSecurityContextHolder(tokenDto.getAccessToken());
-
-                    break;
-                case ERROR:
-                    this.jwtAuthenticationEntryPoint.commence(
-                            request,
-                            response,
-                            new BadCredentialsException(TokenValidStatus.ERROR.getDescription())
-                    );
-                    break;
-                case UNSUPPORTED:
-                    this.jwtAuthenticationEntryPoint.commence(
-                            request,
-                            response,
-                            new BadCredentialsException(TokenValidStatus.UNSUPPORTED.getDescription())
-                    );
-                    break;
-                case WRONG_SIGNATURE:
-                    this.jwtAuthenticationEntryPoint.commence(
-                            request,
-                            response,
-                            new BadCredentialsException(TokenValidStatus.WRONG_SIGNATURE.getDescription())
-                    );
-                    break;
-                default:
-                    break;
-            }
-        }
+//        if (StringUtils.hasText(accessToken)) {
+//            switch (tokenProvider.validateToken(accessToken)) {
+//                case SUCCESS:
+//                    setSecurityContextHolder(accessToken);
+//                    // this.jwtAuthenticationEntryPoint.commence(request, response, new JwtExpiredTokenException("dd"));
+//                    break;
+//                case EXPIRED:
+//                    // Refresh
+//                    TokenDto tokenDto = authService.reissue(
+//                            TokenRequestDto.builder()
+//                                .accessToken(accessToken)
+//                                .refreshToken(refreshToken)
+//                                .build()
+//                    );
+//                    setSecurityContextHolder(tokenDto.getAccessToken());
+//                    break;
+//                case ERROR:
+//                    this.jwtAuthenticationEntryPoint.commence(
+//                            request,
+//                            response,
+//                            new BadCredentialsException(TokenValidStatus.ERROR.getDescription())
+//                    );
+//                    break;
+//                case UNSUPPORTED:
+//                    this.jwtAuthenticationEntryPoint.commence(
+//                            request,
+//                            response,
+//                            new BadCredentialsException(TokenValidStatus.UNSUPPORTED.getDescription())
+//                    );
+//                    break;
+//                case WRONG_SIGNATURE:
+//                    this.jwtAuthenticationEntryPoint.commence(
+//                            request,
+//                            response,
+//                            new BadCredentialsException(TokenValidStatus.WRONG_SIGNATURE.getDescription())
+//                    );
+//                    break;
+//                default:
+//                    break;
+//            }
+//        }
         filterChain.doFilter(request, response);
     }
 

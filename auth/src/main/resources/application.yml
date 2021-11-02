@@ -22,22 +22,6 @@ management:
           - "refresh"
           - "beans"
 
-eureka:
-  instance:
-    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-    prefer-ip-address: false
-    hostname: localhost
-    lease-renewal-interval-in-seconds: 30
-    health-check-url-path: http://${eureka.instance.hostname}:${server.port}/actuator/health
-    status-page-url-path: http://${eureka.instance.hostname}:${server.port}/actuator/info
-  client:
-    healthcheck:
-      enabled: true
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8081/eureka/
-
 # $ echo 'spring-boot-security-jwt-tutorial-jiwoon-spring-boot-security-jwt-tutorial' | base64
 jwt:
   secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK

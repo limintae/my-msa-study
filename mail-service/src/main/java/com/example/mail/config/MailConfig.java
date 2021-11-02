@@ -14,8 +14,8 @@ public class MailConfig {
     public JavaMailSender daumMailSender() {
         JavaMailSenderImpl sender = new JavaMailSenderImpl();
         sender.setHost("smtp.daum.net");
-        sender.setUsername("username");
-        sender.setPassword("password");
+        sender.setUsername("limintae88");
+        sender.setPassword("yourpassword");
         sender.setPort(465);
         sender.setDefaultEncoding("utf-8");
 

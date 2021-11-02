@@ -1,4 +1,4 @@
-package com.msa.example.order.web.rest.exception;
+package com.msa.example.order.web.rest.advice;
 
 import com.msa.example.order.web.rest.dto.BaseErrorResponse;
 import lombok.extern.slf4j.Slf4j;
